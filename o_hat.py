@@ -12,6 +12,7 @@ Usage:
   python o_hat.py data.csv --window 24        # specify window size
   python o_hat.py data.csv --baseline 240     # specify baseline length
   python o_hat.py data.csv --quiet            # numerical output only
+  python o_hat.py data.csv --plot             # generate classification chart
 
 Input CSV: one numeric column (header optional). Time-ordered rows.
 """
@@ -104,7 +105,79 @@ def measure(series, window=None, baseline_len=None):
         "baseline_len_used": baseline_len,
         "data_points": n,
         "extreme_index": int(extreme_idx),
+        "outbreak_start": ss,
+        "outbreak_end": se,
     }
+
+
+def plot_result(series, result, output_path=None):
+    """Generate a classification chart. Requires matplotlib."""
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except ImportError:
+        print("⚠ matplotlib not installed. Install with: pip install matplotlib", file=sys.stderr)
+        return
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5),
+                                    gridspec_kw={"width_ratios": [1.5, 1]})
+
+    # ── Left: Time series with baseline + outbreak windows ──
+    n = len(series)
+    bl = result["baseline_len_used"]
+    ss, se_ = result["outbreak_start"], result["outbreak_end"]
+
+    ax1.plot(range(n), series, color="#374151", linewidth=0.7, alpha=0.8, label="Data")
+    ax1.axvspan(0, bl, alpha=0.12, color="#3b82f6", label="Baseline")
+    ax1.axvspan(ss, se_, alpha=0.18, color="#ef4444", label="Outbreak window")
+    ax1.axvline(x=result["extreme_index"], color="#dc2626", linewidth=1.5,
+                linestyle="--", label="Extreme point")
+
+    ax1.set_xlabel("Time index")
+    ax1.set_ylabel("Value")
+    ax1.set_title(f"Time Series Structure\ncurl={result['curl']:.2f}  "
+                  f"helicity={result['helicity']:.2f}  balance={result['balance_ratio']:.2f}×",
+                  fontsize=10)
+    ax1.legend(fontsize=8, loc="upper right")
+    ax1.grid(True, alpha=0.2)
+
+    # ── Right: Balance ratio classification spectrum ──
+    categories = [
+        ("REGIME\nSATURATION", 0, 1.5, "#22c55e"),
+        ("CONTINUOUS\nFLOW", 1.5, 5, "#3b82f6"),
+        ("PULSE", 5, 20, "#f59e0b"),
+        ("SUPER-PULSE", 20, 45, "#ef4444"),
+    ]
+
+    y_positions = [3, 2, 1, 0]
+    for y, (label, lo, hi, color) in zip(y_positions, categories):
+        ax2.barh(y, hi - lo, left=lo, height=0.6, color=color, alpha=0.3, edgecolor=color, linewidth=1)
+        ax2.text((lo + hi) / 2, y, label, ha="center", va="center", fontsize=8, fontweight="bold", color=color)
+
+    # Plot the measured balance ratio as a vertical line
+    br = result["balance_ratio"]
+    ax2.axvline(x=br, color="#000000", linewidth=2.5, linestyle="-")
+    ax2.plot(br, -0.8, marker="v", markersize=14, color="#000000", clip_on=False)
+    ax2.text(br, -1.3, f"{br:.1f}×\n{result['system_type']}", ha="center", fontsize=10,
+             fontweight="bold", color="#000000")
+
+    ax2.set_xlim(0, 45)
+    ax2.set_ylim(-2, 4)
+    ax2.set_yticks([])
+    ax2.set_xlabel("Balance Ratio")
+    ax2.set_title("Classification Spectrum", fontsize=10)
+    ax2.grid(True, axis="x", alpha=0.2)
+
+    plt.tight_layout()
+    if output_path:
+        plt.savefig(output_path, dpi=150, bbox_inches="tight")
+        print(f"\n  📊 Chart saved: {output_path}")
+    else:
+        path = "o_hat_chart.png"
+        plt.savefig(path, dpi=150, bbox_inches="tight")
+        print(f"\n  📊 Chart saved: {path}")
+    plt.close()
 
 
 def main():
@@ -113,6 +186,8 @@ def main():
     p.add_argument("--window", type=int, default=None, help="Outbreak window size")
     p.add_argument("--baseline", type=int, default=None, help="Baseline length")
     p.add_argument("--quiet", action="store_true", help="Numerical output only")
+    p.add_argument("--plot", action="store_true", help="Generate classification chart")
+    p.add_argument("--plot-output", type=str, default=None, help="Chart output path")
     args = p.parse_args()
 
     series = load_csv(args.csv)
@@ -143,12 +218,14 @@ def main():
         print(f"  SYSTEM TYPE  : {result['system_type']:>14}")
         print("=" * 54)
 
-        # Classification reference
         print("\n  Reference spectrum:")
         print("    SUPER-PULSE        > 20x   (e.g. 1989 Quebec Storm)")
         print("    PULSE             5-15x   (e.g. Earthquakes)")
         print("    CONTINUOUS FLOW   1.5-4x  (e.g. ENSO, COVID)")
         print("    REGIME SATURATION  < 1.5x  (e.g. Seasonal forcing)")
+
+    if args.plot:
+        plot_result(series, result, args.plot_output)
 
 
 if __name__ == "__main__":
