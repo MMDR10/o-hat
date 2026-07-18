@@ -56,10 +56,22 @@ The same three numbers classify **seven different types of dynamical systems acr
 ```bash
 python o_hat.py your_data.csv
 python o_hat.py your_data.csv --window 50 --baseline 200
-python o_hat.py your_data.csv --quiet  # machine-readable output
+python o_hat.py your_data.csv --quiet          # machine-readable output
+python o_hat.py your_data.csv --plot           # classification chart
+python o_hat.py your_data.csv --sensitivity    # window stability verification
 ```
 
 Any single-column CSV works. Timestamps not required — just values, one per row, time-ordered.
+
+### 🔬 Window Stability (v1.2+)
+
+Worried about cherry-picking? `--sensitivity` sweeps window and baseline sizes across 50%–150% (121 combinations) and reports a stability band:
+
+```bash
+python o_hat.py examples/enso.csv --window 60 --baseline 300 --sensitivity
+```
+
+If your balance ratio stays within a narrow band across all window sizes, the structural signal is genuine — not an artifact of parameter tuning. See §9 of the [classification spectrum](docs/classification-spectrum-v2.md) for methodology and cross-domain results.
 
 ## Why This Exists
 
