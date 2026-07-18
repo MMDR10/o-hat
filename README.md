@@ -85,8 +85,8 @@ Built from empirical cross-domain validation across 12 domains. See `docs/classi
 
 If you use this in research, please cite:
 
-> DR (tygtDc) & MKP. "Ô (O-Hat): A Cross-Domain Structural Measurement Operator." 2026.
-> Zenodo: [10.5281/zenodo.21415286](https://doi.org/10.5281/zenodo.21415286)
+> DR, MM & MKP. "Ô (O-Hat) v2.0: A Cross-Domain Structural Measurement Operator — with Window Stability & Perturbation Moat." 2026.
+> Zenodo: [10.5281/zenodo.21422565](https://doi.org/10.5281/zenodo.21422565)
 
 ## License
 
