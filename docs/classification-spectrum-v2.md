@@ -142,6 +142,9 @@ This matrix was independently identified by DeepSeek's analysis of the Ô framew
 | 10 | **ICS Cyberattacks (security)** | PERTURBATION | Varies | H_v3 ↑ — attack introduces structure not present in baseline | ✅ Verified |
 | 11 | **S&P 500 (finance)** | VOLATILITY SHIFT | < 1 | Variance change without mean shift; balance < 1, helicity ↑ | ⚠️ Preliminary |
 | 12 | **Microservice Failures (systems)** | COLLAPSE (Type X) | Varies | Cascading failure destroys internal structure | ⚠️ Preliminary |
+| 13 | **NASA C-MAPSS — single-condition (engineering)** | CONTINUOUS FLOW ~ PULSE_DUAL (per-engine) | N/A | 66–83% engines show degradation transitions; Ô detects genuine structural signal | ✅ Verified |
+| 14 | **NASA C-MAPSS — multi-condition, raw (engineering)** | COLLAPSE dominant (artifact) | N/A | 111σ collapse from operating-condition switching — confound, not degradation | ✅ Verified |
+| 15 | **NASA C-MAPSS — multi-condition, normalized (engineering)** | CONTINUOUS FLOW (91%+) | N/A | Linear-residual normalization removes condition confound; 8–9% genuine transitions remain | ✅ Verified |
 
 ### Untested Domains (Priority Queue)
 
@@ -152,6 +155,7 @@ This matrix was independently identified by DeepSeek's analysis of the Ô framew
 | Stellar light curves | Unknown | Potentially novel transient structure |
 | Social media virality | PULSE or SUPER-PULSE | Sparse events with massive contrast |
 | LLM perplexity under attack | PERTURBATION | Attention-layer findings suggest H_v3 ↑ |
+| Industrial turbofan RUL prediction | CONTINUOUS FLOW | C-MAPSS normalized — potential feature for remaining useful life estimation |
 
 ---
 
@@ -233,6 +237,7 @@ Output includes a full 11×11 matrix, stability statistics, and a dual-panel cha
 | 2 | Ô Cross-Domain Synthesis Note | [10.5281/zenodo.21416188](https://doi.org/10.5281/zenodo.21416188) | 2026-07-17 |
 | 3 | COVID-19 Cross-Domain Validation | [10.5281/zenodo.21416411](https://doi.org/10.5281/zenodo.21416411) | 2026-07-17 |
 | 4 | H-Detector v0.4 — Cross-Domain Structural Detection | [10.5281/zenodo.21383080](https://doi.org/10.5281/zenodo.21383080) | 2026-07-15 |
+| 5 | Ô Framework × NASA C-MAPSS: Condition-Normalization Confirms Structural Decoupling | [10.5281/zenodo.21424837](https://doi.org/10.5281/zenodo.21424837) | 2026-07-18 |
 
 ### Software
 
@@ -258,5 +263,5 @@ Output includes a full 11×11 matrix, stability statistics, and a dual-panel cha
 
 ---
 
-*Authored by DR (tygtDc) and MKP. Cross-domain validation conducted June–July 2026.*
-*Cite as: DR & MKP. "Ô Cross-Domain Classification Spectrum v2.0." Zenodo. 2026.*
+*Authored by DR (tygtDc), under the direction of MKP. Cross-domain validation conducted June–July 2026.*
+*Cite as: DR. "Ô Cross-Domain Classification Spectrum v2.0." Zenodo. 2026.*
